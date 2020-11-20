@@ -266,7 +266,9 @@ public class GFSQuery {
     }
     
     //overriden
-    internal func locationIsInQuery(loc: CLLocation) -> Bool {
+    internal func 
+    
+    ery(loc: CLLocation) -> Bool {
         fatalError("Override in subclass.")
     }
     
@@ -294,7 +296,14 @@ public class GFSQuery {
         if (isNew || !(wasInQuery ?? false)) && info?.isInQuery != nil {
             for (offset: _, element: (key: _, value: block)) in keyEnteredObservers.enumerated() {
                 self.geoFirestore.callbackQueue.async {
-                    block(key, info!.location)
+                    
+                     if let isInQuery = info?.isInQuery{
+                        if (isInQuery == true){
+                               print ("This key is allowed", key)
+                               block(key, info!.location)
+                           }
+                    }
+    
                 }
             }
         } else if !isNew && changedLocation && info?.isInQuery != nil {
@@ -737,7 +746,18 @@ public class GFSCircleQuery: GFSQuery {
     }
     
     override internal func locationIsInQuery(loc: CLLocation) -> Bool {
-        return loc.distance(from: self.center) <= (self.radius * 1000.0)
+        let distanceCalc: Double = loc.distance(from: center)
+        let radiusMax: Double = radius*1000
+        
+        if (distanceCalc <= radiusMax){
+            print ("New distance: \(distanceCalc) and radius: \(radiusMax) --> IN")
+            return true
+        }
+        else{
+            print ("New distance: \(distanceCalc) and radius: \(radiusMax)   --> OUT")
+            return false
+        }
+        
     }
     
     override internal func queriesForCurrentCriteria() -> Set<AnyHashable> {
