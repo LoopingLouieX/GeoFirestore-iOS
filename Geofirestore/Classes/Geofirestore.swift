@@ -266,11 +266,9 @@ public class GFSQuery {
     }
     
     //overriden
-    internal func 
-    
-    ery(loc: CLLocation) -> Bool {
+    internal func locationIsInQuery(loc: CLLocation) -> Bool {
         fatalError("Override in subclass.")
-    }
+      }
     
     internal func queriesForCurrentCriteria() -> Set<AnyHashable> {
         fatalError("Override in subclass.")
