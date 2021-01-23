@@ -58,6 +58,25 @@ public class GeoFirestore {
         return collectionRef
     }
     
+    
+    
+        public func setLocationWithTitle(geopoint: GeoPoint, forUserID userID: String, forDocumentWithID documentID: String,forLocationName locationName: String, completion: GFSCompletionBlock? = nil) {
+        let location = geopoint.locationValue()
+        if CLLocationCoordinate2DIsValid(location.coordinate) {
+            if let geoHash = GFGeoHash(location: location.coordinate).geoHashValue {
+                self.collectionRef.document(documentID).setData(["pos": geopoint, "geohash": geoHash, "id": userID, "locationName": locationName], mergeFields: ["geohash", "pos", "id", "locationName"], completion: completion)
+                
+//                self.collectionRef.document(documentID).setData(["l": geopoint, "g": geoHash], mergeFields: ["g", "l"], completion: completion)
+            }
+            else {
+                print("GEOFIRESTORE ERROR: Couldn't calculate geohash.")
+            }
+        }
+        else {
+            NSException.raise(NSExceptionName.invalidArgumentException, format: "Invalid coordinates!", arguments: getVaList(["nil"]))
+        }
+    }
+    
     /**
      * Updates the location for a document and calls the completion callback once the location was successfully updated on the
      * server.
